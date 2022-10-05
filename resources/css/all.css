@@ -1,0 +1,74 @@
+.d-flex{
+    display: flex;
+}
+
+a{
+    text-decoration: none;
+    color: #000000;
+}
+
+p{
+    margin: 0px;
+}
+
+/*======ALERT SUCCESS - ERROR======*/
+
+
+p.success{
+    color: green; ;
+}
+
+p.alert-success{
+    color: #000;
+    padding: 5px;
+    display: block;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/*====FORM====*/
+form{
+    margin-bottom: 0px;
+}
+
+form .input-space{
+    display: block;
+    margin-bottom: 30px;
+}
+
+input:not(input[type=radio]){
+    padding: 5px;
+    width: 270px;
+    height: 30px;
+    border: 1px solid #a2dba9;
+    border-radius: 5px;
+}
+
+input[type=submit]:hover{
+    cursor: pointer;
+}
+
+form .d-flex{
+    justify-content: space-between;
+}
+
+/*======FILE======*/
+input[type=file]{
+    display: none;
+}
+
+.file-upload{
+    cursor: pointer;
+    border: 1px solid#000;
+    border-radius: 5px;
+    display: inline-block;
+    padding: 6px 12px;
+}
+
+img{
+    width: 100px;
+    height: 100px;
+}
+.active{
+    background-color: #15c933;
+}
