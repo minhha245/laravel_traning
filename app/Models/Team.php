@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Team extends Model
 {
     use HasFactory;
-    public $timestamps =false;
+
+    public $timestamps = false;
     protected $fillable = [
         'name', 'ins_id', 'upd_id', 'ins_datetime', 'upd_datetime', 'del_flag'
     ];
-    protected $primarykey='id';
-    protected $table ='m_teams';
+    protected $primarykey = 'id';
+    protected $table = 'm_teams';
 
 }

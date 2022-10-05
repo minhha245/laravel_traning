@@ -57,7 +57,7 @@ class CustomAuthController extends Controller
         $data = $request->all();
         $check = $this->userRepository->register($data);
         auth()->login($check);
-        return redirect("dashboard")->with('status','You have signed-in');
+        return redirect("dashboard")->with('status', 'You have signed-in');
     }
 
     public function logOut()
