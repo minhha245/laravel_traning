@@ -1,10 +1,8 @@
 <?php
-
 namespace App\Repository;
 
 use App\Repository\BaseRepository;
 use App\Models\Team;
-
 class TeamRepository extends BaseRepository
 {
     //lấy model tương ứng
@@ -15,11 +13,10 @@ class TeamRepository extends BaseRepository
 
     public function getTeam()
     {
-        return $this->model->where('del_flag', '0')->take(5)->get();
+        return $this->model->where('del_flag', config('constant.DELETED_OFF'))->get();
     }
-
     public function getInforSearch($data)
     {
-        return $this->model->where('name', 'LIKE', '%' . $data . '%')->where('del_flag', '0')->get();
+        return $this->model->where('name','LIKE','%'.$data.'%' )->where('del_flag', config('constant.DELETED_OFF'))->get();
     }
 }

@@ -1,24 +1,23 @@
 @extends('layouts.app')
+<link rel="stylesheet" href="{{ asset('resources/css/search.css') }}">
 @section('title', 'SearchTeam')
+
 @section('content')
-    <link rel="stylesheet" href="{{ asset('resources/css/search.css') }}">
-    @if (session('error'))
-        <div class="alert alert-danger" role="alert">
-            {{ session('error') }}
-        </div>
-    @endif
-    @if (session('message'))
-        <div class="alert alert-success" role="alert">
-            {{ session('message') }}
-        </div>
-    @endif
 
     <div class="card-body">
+        @if (session('error'))
+            <div class="alert alert-danger" role="alert">
+              <p>{{ session('error') }}</p>
+            </div>
+        @endif
+        @if (session('message'))
+            <div class="alert alert-success" role="alert">
+               <p>{{session('message')}}</p>
+            </div>
+        @endif
 
         <div id="form_search">
-            <div class="alert alert-danger" role="alert">
-                <p>{{config('messages.create_success')}}</p>
-            </div>
+
             <form method="GET" action="">
                     <span class="input-space">
                         <label for="name">Name</label>
@@ -36,13 +35,9 @@
         @include('layouts.pagging')
         <!--            Data Table-->
         <div class="container">
-            @if (session('messages'))
-                <div class="alert alert-success" role="alert">
-                    {{ session('messages') }}
-                </div>
-            @endif
+
             <div class="row justify-content-center">
-                <div class="col-md-6">
+                <div class="col-md-10">
                     <div class="card">
                         <div class="card-header"></div>
 

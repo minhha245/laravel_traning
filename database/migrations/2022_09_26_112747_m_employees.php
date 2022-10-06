@@ -16,9 +16,10 @@ class MEmployees extends Migration
     {
         Schema::create('m_employees', function (Blueprint $table) {
             $table->id()->length(11);
-            $table->integer('team_id')->length(11);
+            $table->bigInteger('team_id')->unsigned();
+            $table->foreign('team_id')->references('id')->on('m_teams');
             $table->string('email', 128);
-            $table->string('firt_name', 128);
+            $table->string('first_name', 128);
             $table->string('last_name', 128);
             $table->string('password', 64);
             $table->char('gender', 64)->comment('1/Male 2/Female');

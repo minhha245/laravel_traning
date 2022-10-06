@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repository\UserRepository;
+use Hash;
+use App\Http\Requests\LoginRequests;
+
 
 class CustomAuthController extends Controller
 {
@@ -20,19 +23,8 @@ class CustomAuthController extends Controller
         return view('auth.login');
     }
 
-    public function customLogin(Request $request)
+    public function customLogin(LoginRequests $request)
     {
-        $request->validate([
-            'email' => 'required',
-            'password' => 'required',
-        ],
-            [
-                'email.required' => 'Email is not blank!',
-                'password.required' => 'Password is not blank!',
-
-            ]
-        );
-
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
             return redirect("dashboard")->with('status', 'Signed in');
@@ -53,8 +45,14 @@ class CustomAuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
         ]);
-
-        $data = $request->all();
+        $email = $request->input('email');
+        $name = $request->input('name');
+        $pass = Hash::make($request->input('password'));
+        $data = [
+            'name' => $name,
+            'email' => $email,
+            'password' => $pass,
+        ];
         $check = $this->userRepository->register($data);
         auth()->login($check);
         return redirect("dashboard")->with('status', 'You have signed-in');

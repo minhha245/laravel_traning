@@ -13,7 +13,7 @@ class EmployeeRepository extends BaseRepository
         return \App\Models\Team::class;
     }
 
-    public function getTeam()
+    public function getEmplyee()
     {
         return $this->model->where('del_flag', '0')->take(5)->get();
     }

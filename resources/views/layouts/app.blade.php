@@ -6,7 +6,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- <title>{{ config('app.name', 'Laravel') }}</title> -->
+    <title> @yield('title')</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -19,6 +19,8 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 </head>
@@ -75,8 +77,8 @@
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
 
-                                <a class="dropdown-item" href="">Search</a>
-                                <a class="dropdown-item" href="">Create</a>
+                                <a class="dropdown-item" href="{{route('employee.search')}}">Search</a>
+                                <a class="dropdown-item" href="{{route('employee.create')}}">Create</a>
 
                                 </div>
                             </li>
