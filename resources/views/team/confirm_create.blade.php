@@ -40,13 +40,10 @@
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel
                                     </button>
                                     <form
-                                        action="{{ route('teams.create', request()->id) }}"
+                                        action="{{ route('teams.store') }}"
                                         method="POST" style="display: inline-block">
                                         @csrf
-                                        <input type="hidden" class="form-control" name="name"
-                                               value="{{ session('createTeam')['name'] }}"
-                                               id="name"
-                                               aria-describedby="name">
+
                                         <button type="submit" class="btn btn-primary">OK</button>
                                     </form>
                                 </div>

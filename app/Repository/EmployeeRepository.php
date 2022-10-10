@@ -10,16 +10,17 @@ class EmployeeRepository extends BaseRepository
     //lấy model tương ứng
     public function getModel()
     {
-        return \App\Models\Team::class;
+        return \App\Models\Employee::class;
     }
 
-    public function getEmplyee()
+    public function getEmployee()
     {
-        return $this->model->where('del_flag', '0')->take(5)->get();
+        return $this->model->where('del_flag', config('constant.DELETED_OFF'))->get();
     }
 
     public function getInforSearch($data)
     {
-        return $this->model->where('name', 'LIKE', '%' . $data . '%')->where('del_flag', '0')->get();
+        return $this->model->where('last_name', 'LIKE', '%' . $data['name'] . '%')->where('del_flag',config('constant.DELETED_OFF'))->get();
     }
+
 }

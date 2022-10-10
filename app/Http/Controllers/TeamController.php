@@ -60,16 +60,8 @@ class TeamController extends Controller
         return view('team.edit')->with('teams', $teams);
     }
 
-    public function confirmEdit(Request $request)
+    public function confirmEdit(TeamsRequests $request)
     {
-        $request->validate([
-
-            'name' => 'required|max:255',
-        ],
-            [
-                'name.required' => 'Name is not blank!',
-            ]
-        );
         $request->flash();
         $data = $request->all();
         session()->put('editTeam', $data);

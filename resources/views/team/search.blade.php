@@ -25,7 +25,7 @@
                      </span>
                 <div class="form-group d-flex mt-4" style="justify-content: space-between">
                     <!-- <button type="submit" class="btn btn-secondary">Reset</button> -->
-                    <span class="btn btn-secondary"><a href="{{route('teams.search')}}">Reset</a></span>
+                    <span><a class="btn btn-secondary" href="{{route('teams.search')}}">Reset</a></span>
                     <button type="submit" class="btn btn-primary">Search</button>
                 </div>
             </form>
@@ -52,7 +52,7 @@
                                     <th scope="col"></th>
                                     <th scope="col"></th>
                                     <th scope="col"></th>
-                                    <th scope="col">Action</th>
+                                    <th style="color: #0d6efd" scope="col">Action</th>
                                 </tr>
 
                                 </thead>
@@ -78,11 +78,11 @@
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            <span class="btn btn-danger"><a
+                                            <span><a class="btn btn-danger"
                                                     href="{{ route('teams.edit',[$team->id]) }}">Edit</a></span>
-                                            <span class="btn btn-success">
+                                            <span >
 
-            <a href="{{ route('teams.delete',[$team->id]) }}" onclick="return confirm('Are you sure');">Delete</a>
+            <a class="btn btn-success" href="{{ route('teams.delete',[$team->id]) }}" onclick="return confirm('Are you sure');">Delete</a>
       </span>
                                         </td>
                                     </tr>

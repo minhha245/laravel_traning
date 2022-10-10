@@ -15,47 +15,48 @@
             </div>
         @endif
 
-            <div id="form_search">
-                <form method="GET" action="">
+        <div id="form_search">
+            <form method="GET" action="">
 
-                    <div class="form-group row">
+                <div class="form-group row">
                     <span class="input-space">
                         <label for="team">Team</label>
-                                <select name="team" id="team" >
-                                    <option value="">--Select--</option>
-
+                                <select name="team_id" id="team">
+                                       @foreach($teams as $value)
+                                        <option value="{{$value->id}}">{{$value->name}}</option>
+                                    @endforeach
                                 </select>
                      </span>
-                    </div>
-                    <div class="form-group row">
+                </div>
+                <div class="form-group row">
                     <span class="input-space">
                         <label for="email">Email</label>
                         <input type="text" name="email" value="" id="email" maxlength="50">
                      </span>
-                    </div>
-                    <div class="form-group row">
+                </div>
+                <div class="form-group row">
                     <span class="input-space">
                         <label for="name">Name</label>
                         <input type="text" name="name" value="" id="name">
                      </span>
-                    </div>
+                </div>
 
-                    <div class="form-group d-flex mt-4" style="justify-content: space-between">
-{{--                        <button type="submit" class="btn btn-secondary" name="reset">Reset</button>--}}
-                        <span><a class="btn btn-secondary" href="{{route('employee.search')}}">Reset</a></span>
+                <div class="form-group d-flex mt-4" style="justify-content: space-between">
+                    {{--                        <button type="submit" class="btn btn-secondary" name="reset">Reset</button>--}}
+                    <span><a class="btn btn-secondary" href="{{route('employee.search')}}">Reset</a></span>
 
-                        <button type="submit" class="btn btn-primary">Search</button>
-                    </div>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
 
-                </form>
-            </div>
+            </form>
+        </div>
         <!--            Pagging-->
         @include('layouts.pagging')
         <!--            Data Table-->
         <div class="container">
 
             <div class="row justify-content-center">
-                <div class="col-md-10">
+                <div class="col-lg-auto">
                     <div class="card">
                         <div class="card-header"></div>
 
@@ -64,44 +65,45 @@
                             <table class="table">
                                 <thead class="thead-light">
                                 <tr>
-                                    <th><a href="">ID <i class="fas fa-sort"></i></a></th>
+                                    <th scope="col"><a href="">ID <i class="fas fa-sort"></i></a></th>
+                                    <th><a href="">Name <i class="fas fa-sort"></i></a></th>
                                     <th><a href="">Team <i class="fas fa-sort"></i></a></th>
                                     <th><a href="">Email <i class="fas fa-sort"></i></a></th>
 
-                                    <th scope="col"></th>
-                                    <th scope="col"></th>
-                                    <th scope="col"></th>
-                                    <th scope="col">Action</th>
+                                    <th style="color: #0d6efd" scope="col">Gender</th>
+                                    <th style="color: #0d6efd" scope="col">Birthday</th>
+                                    <th style="color: #0d6efd" scope="col">Address</th>
+                                    <th style="color: #0d6efd" scope="col">Avatar</th>
+                                    <th style="color: #0d6efd" scope="col">Salary</th>
+                                    <th style="color: #0d6efd" scope="col">Action</th>
                                 </tr>
 
                                 </thead>
 
 
                                 <tbody>
-                                @php
-                                    $count =count($result);
-                                @endphp
-                                @if($count==0)
+                                @if(count($result)==0)
 
                                     <td colspan='6'>Not found data!</td>
 
                                 @else
                                 @endif
 
-                                @foreach($result as $key => $team)
+                                @foreach($result as $key => $employee)
                                     <tr>
-                                        <th scope="row">{{$team->id}}</th>
-                                        <td>{{$team->name}}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <th scope="row">{{$employee->id}}</th>
+                                        <td>{{"$employee->first_name"." "."$employee->last_name"}}</td>
+                                        <td>{{$employee->team_id}}</td>
+                                        <td>{{$employee->email}}</td>
+                                        <td>{{$employee->gender == config('constant.GENDER_MALE') ? 'Male':'Female'}}</td>
+                                        <td>{{$employee->birthday}}</td>
+                                        <td>{{$employee->address}}</td>
+                                        <td>{{$employee->address}}</td>
+                                        <td>{{number_format($employee->salary,0,'','.'). "vnđ"}}</td>
                                         <td>
-                                            <span class="btn btn-danger"><a
-                                                    href="{{ route('teams.edit',[$team->id]) }}">Edit</a></span>
-                                            <span class="btn btn-success">
-
-            <a href="{{ route('teams.delete',[$team->id]) }}" onclick="return confirm('Are you sure');">Delete</a>
+                                            <span><a class="btn btn-danger" href="{{route('employee.edit',[$employee->id])}}">Edit</a></span><span>
+            <a class="btn btn-success" href="{{ route('employee.delete',[$employee->id]) }}"
+               onclick="return confirm('Are you sure');">Delete</a>
       </span>
                                         </td>
                                     </tr>

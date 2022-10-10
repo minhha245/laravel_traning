@@ -45,13 +45,13 @@ Route::group(['prefix' => '/teams', 'middleware' => 'checkLogin'], function () {
 
 Route::group(['prefix' => '/employee', 'middleware' => 'checkLogin'], function () {
     Route::get('/search', [EmployeeController::class, 'search'])->name('employee.search');
-//    Route::get('/delete/{id}', [EmployeeController::class, 'destroy'])->name('employee.delete');
-//
-//    Route::get('/edit/{id}', [EmployeeController::class, 'edit'])->name('employee.edit');
-//    Route::post('/edit_confirm/{id}', [EmployeeController::class, 'confirmEdit'])->name('employee.edit-confirm');
-//    Route::post('/update/{id}', [EmployeeController::class, 'update'])->name('employee.update');
-//
-   Route::get('/create', [EmployeeController::class, 'create'])->name('employee.create');
-//    Route::post('/create_confirm', [EmployeeController::class, 'confirmCreate'])->name('employee.create-confirm');
-//    Route::post('/create', [EmployeeController::class, 'store'])->name('employee.store');
+    Route::get('/delete/{id}', [EmployeeController::class, 'destroy'])->name('employee.delete');
+
+    Route::get('/edit/{id}', [EmployeeController::class, 'edit'])->name('employee.edit');
+    Route::post('/edit_confirm/{id}', [EmployeeController::class, 'confirmEdit'])->name('employee.edit-confirm');
+    Route::post('/update/{id}', [EmployeeController::class, 'update'])->name('employee.update');
+
+    Route::get('/create', [EmployeeController::class, 'create'])->name('employee.create');
+    Route::post('/create_confirm', [EmployeeController::class, 'confirmCreate'])->name('employee.create-confirm');
+    Route::post('/create', [EmployeeController::class, 'store'])->name('employee.store');
 });
