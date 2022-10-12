@@ -4,10 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Scopes\DelflagScope;
 
 class Employee extends Model
 {
     use HasFactory;
+    
+    protected static function booted()
+    {
+        static::addGlobalScope(new DelflagScope);
+    }
+
     public $timestamps =false;
     protected $fillable = [
         'team_id',
@@ -31,9 +38,15 @@ class Employee extends Model
     ];
     protected $primarykey='id';
     protected $table ='m_employees';
+
     public function team()
     {
         return $this->belongsTo(Team::class, 'team_id', 'id');
+    }
+
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . " " . $this->last_name;
     }
 
 }

@@ -17,12 +17,12 @@
 
                         <form method="POST" action="{{route('employee.create-confirm')}}">
                             @csrf
-                            <div class="form-group ">
+                            <!-- <div class="form-group ">
                                 <label for="avatar">Avatar*</label>
                                 <label class="file-upload"><input class="avatar" type="text" name="avatar"
                                                                   onchange="readURL(this);" value="12346.png"></label>
 
-                            </div>
+                            </div> -->
                             @error('Avatar')
                             <small class="form-text text-danger"> {{ $message }}</small>
                             @enderror

@@ -13,10 +13,23 @@ class TeamRepository extends BaseRepository
 
     public function getTeam()
     {
-        return $this->model->where('del_flag', config('constant.DELETED_OFF'))->get();
+        return $this->model->get();
     }
     public function getInforSearch($data)
     {
-        return $this->model->where('name','LIKE','%'.$data.'%' )->where('del_flag', config('constant.DELETED_OFF'))->get();
+        if (empty($data)) {
+            return $this->model->select('id', 'name')->Paginate(config('constant.LIMIT_PER_PAGE'));
+        }
+
+        return $this->model->when(!empty($data['name']), function ($q) use ($data) {
+            return $q->where('name', 'like', '%' . $data['name'] . '%');
+        })
+            ->when(!empty($data['sort_field'] && $data['sort_type'] == 'desc'), function ($q) use ($data) {
+                return $q->orderByDesc($data['sort_field']);
+            })
+            ->when(!empty($data['sort_field'] && $data['sort_type'] == 'asc'), function ($q) use ($data) {
+                return $q->orderBy($data['sort_field']);
+            })
+            ->Paginate(config('constant.LIMIT_PER_PAGE'));
     }
 }

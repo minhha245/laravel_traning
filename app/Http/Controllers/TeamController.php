@@ -90,18 +90,18 @@ class TeamController extends Controller
         return redirect()->back()->with('message', config('messages.delete_success'));
     }
 
-    public function search()
+    public function search(Request $request)
     {
-        if (isset($_GET['name'])) {
-            $data = $_GET['name'];
-            $result = $this->teamRepo->getInforSearch($data);
-            $teams = $this->teamRepo->getTeam();
-        } else {
-            $data = "";
-            //$result = $this->teamRepo->getTeam();
-            $result = $this->teamRepo->getInforSearch($data);
-        }
+        try {
+            $request->flash();
+            $result = $this->teamRepo->getInforSearch($request);
+                           
+            return view('team.search', compact('result'));
 
-        return view('team.search')->with('result', $result);
+        } catch (ModelNotFoundException $exception) {
+            Log::error('Message: ' . $exception->getMessage() . ' Line : ' . $exception->getLine());
+
+            return back()->withError($exception->getMessage())->withInput();
+        }
     }
 }

@@ -42,17 +42,17 @@
                         <div class="card-header"></div>
 
                         <div class="card-body">
-
+                          
                             <table class="table">
                                 <thead class="thead-light">
                                 <tr>
-                                    <th><a href="">ID <i class="fas fa-sort"></i></a></th>
-                                    <th><a href="">Name <i class="fas fa-sort"></i></a></th>
+                                    <th onclick="sortByField('id')">ID <i class="fas fa-sort"></i></th>
+                                    <th onclick="sortByField('id')">Name <i class="fas fa-sort"></i></th>
                                     <th scope="col"></th>
                                     <th scope="col"></th>
                                     <th scope="col"></th>
                                     <th scope="col"></th>
-                                    <th style="color: #0d6efd" scope="col">Action</th>
+                                    <th scope="col">Action</th>
                                 </tr>
 
                                 </thead>

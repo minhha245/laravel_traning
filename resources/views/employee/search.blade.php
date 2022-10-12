@@ -17,7 +17,7 @@
 
         <div id="form_search">
             <form method="GET" action="">
-
+            
                 <div class="form-group row">
                     <span class="input-space">
                         <label for="team">Team</label>
@@ -31,13 +31,13 @@
                 <div class="form-group row">
                     <span class="input-space">
                         <label for="email">Email</label>
-                        <input type="text" name="email" value="" id="email" maxlength="50">
+                        <input type="text" name="email" value="{{request()->email}}" id="email" maxlength="50">
                      </span>
                 </div>
                 <div class="form-group row">
                     <span class="input-space">
                         <label for="name">Name</label>
-                        <input type="text" name="name" value="" id="name">
+                        <input type="text" name="name" value="{{request()->name}}" id="name">
                      </span>
                 </div>
 
@@ -65,17 +65,17 @@
                             <table class="table">
                                 <thead class="thead-light">
                                 <tr>
-                                    <th scope="col"><a href="">ID <i class="fas fa-sort"></i></a></th>
-                                    <th><a href="">Name <i class="fas fa-sort"></i></a></th>
-                                    <th><a href="">Team <i class="fas fa-sort"></i></a></th>
-                                    <th><a href="">Email <i class="fas fa-sort"></i></a></th>
+                                    <th onclick="sortByField('id')" scope="col">ID <i class="fas fa-sort"></i></th>
+                                    <th onclick="sortByField('first_name')">Name <i class="fas fa-sort"></i></th>
+                                    <th onclick="sortByField('team')">Team <i class="fas fa-sort"></i></th>
+                                    <th onclick="sortByField('email')">Email <i class="fas fa-sort"></i></th>
 
-                                    <th style="color: #0d6efd" scope="col">Gender</th>
-                                    <th style="color: #0d6efd" scope="col">Birthday</th>
-                                    <th style="color: #0d6efd" scope="col">Address</th>
-                                    <th style="color: #0d6efd" scope="col">Avatar</th>
-                                    <th style="color: #0d6efd" scope="col">Salary</th>
-                                    <th style="color: #0d6efd" scope="col">Action</th>
+                                    <th scope="col">Gender</th>
+                                    <th scope="col">Birthday</th>
+                                    <th scope="col">Address</th>
+                                    <th scope="col">Avatar</th>
+                                    <th onclick="sortByField('salary')"scope="col">Salary <i class="fas fa-sort"></i></th>
+                                    <th scope="col">Action</th>
                                 </tr>
 
                                 </thead>
@@ -92,13 +92,13 @@
                                 @foreach($result as $key => $employee)
                                     <tr>
                                         <th scope="row">{{$employee->id}}</th>
-                                        <td>{{"$employee->first_name"." "."$employee->last_name"}}</td>
-                                        <td>{{$employee->team_id}}</td>
+                                        <td>{{"$employee->full_name"}}</td>
+                                        <td>{{$employee->team->name}}</td>
                                         <td>{{$employee->email}}</td>
                                         <td>{{$employee->gender == config('constant.GENDER_MALE') ? 'Male':'Female'}}</td>
                                         <td>{{$employee->birthday}}</td>
                                         <td>{{$employee->address}}</td>
-                                        <td>{{$employee->address}}</td>
+                                        <td>{{$employee->avatar}}</td>
                                         <td>{{number_format($employee->salary,0,'','.'). "vnđ"}}</td>
                                         <td>
                                             <span><a class="btn btn-danger" href="{{route('employee.edit',[$employee->id])}}">Edit</a></span><span>

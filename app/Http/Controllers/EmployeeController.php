@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 use App\Repository\EmployeeRepository;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Database\QueryException;
+
 class EmployeeController extends Controller
 {
     public $employeeRepo, $teamRepo;
@@ -18,26 +22,20 @@ class EmployeeController extends Controller
         $this->teamRepo = $teamRepo;
     }
 
-    public function search()
+    public function search(Request $request)
     {
-        $teams = $this->teamRepo->getAll();
-        if (isset($_GET['name'])&&isset($_GET['email'])) {
-            $data = [
-                'name'=>$_GET['name'],
-                'email'=>$_GET['email'],
-                ];
-            $result = $this->employeeRepo->getInforSearch($data);
-            $this->employeeRepo->getEmployee();
-        } else {
-            $data = [
-                'name'=>'',
-                'email'=>'',
-            ];
-            $result = $this->employeeRepo->getInforSearch($data);
+        try {
+            $request->flash();
+            $teams = $this->teamRepo->getAll();
+            $result = $this->employeeRepo->getInforSearch($request);
 
+            return view('employee.search', compact('result', 'teams'));
+
+        } catch (ModelNotFoundException $exception) {
+            Log::error('Message: ' . $exception->getMessage() . ' Line : ' . $exception->getLine());
+
+            return back()->withError($exception->getMessage())->withInput();
         }
-
-        return view('employee.search')->with(compact('result', 'teams'));
     }
 
     public function create()
@@ -48,8 +46,9 @@ class EmployeeController extends Controller
 
     public function confirmCreate(EmployeeRequests $request)
     {
+        request()->flash();
         $data = $request->all();
-        $request->flash();
+        
         session()->put('createEmployee', $data);
         $teams = $this->teamRepo->find(request()->team_id);
 
@@ -59,16 +58,24 @@ class EmployeeController extends Controller
 
     public function store(Request $request)
     {
+        try {
         $data = session()->get('createEmployee');
-        $upd_id = Auth::id();
-        $value = ['ins_id' => $upd_id,
-            'ins_datetime' => date("Y-m-d H:i:s"),
-            'password' => '123456',
-        ];
-        $data = array_merge($data, $value);
+
+        if (!$data) {
+            return redirect()->route('employee.search')->with('message', config('messages.create_failed'));
+        }
+
         $this->employeeRepo->create($data);
 
         return redirect()->route('employee.search')->with('message', config('messages.create_success'));
+        
+        } catch (QueryException $exception) {
+            $error = $exception->errorInfo;
+            Log::error('Message: ' . $exception->getMessage() . ' Line : ' . $exception->getLine());
+
+            return redirect()->back()->with('error', $error);
+        }
+        
     }
 
     public function edit($id)
@@ -95,22 +102,43 @@ class EmployeeController extends Controller
 
     public function update($id, Request $request)
     {
-        $data = session()->get('editEmployee');
-        $upd_id = Auth::id();
-        $value = ['upd_id' => $upd_id,
-            'upd_datetime' => date("Y-m-d H:i:s"),
-        ];
-        $data = array_merge($data, $value);
-        $this->employeeRepo->update($id, $data);
+        try {
 
-        return redirect()->route('employee.search')->with('message', config('messages.update_success'));
+            $data = session()->get('editEmployee');
+
+            if (!$data) {
+                return redirect()->route('employee.search')->with('message', config('messages.update_failed'));
+            }
+
+            return redirect()->route('employee.search')->with('message', config('messages.update_success'));
+        
+        } catch (\Exception $exception) {
+            $error = config('messages.update_not_list') . $exception->getCode();
+            Log::error('Message: ' . $exception->getMessage() . ' Line : ' . $exception->getLine());
+
+            return redirect()->route('employee.search')->with('error', $error);
+        }
+        
     }
 
     public function destroy($id)
     {
-        $teams = $this->employeeRepo->find($id);
-        $this->employeeRepo->delete($id);
+        try {
+            $result = $this->employeeRepo->delete($id);
 
-        return redirect()->back()->with('message', config('messages.delete_success'));
+            if ($result) {
+                return redirect()->back()->with('message', config('messages.delete_success'));
+            } else {
+                return redirect()->back()->with('message', config('messages.delete_failed'));
+            }
+
+        } catch (\Exception $exception) {
+            $error = config('messages.delete_not_list') . $exception->getCode();
+            Log::error('Message: ' . $exception->getMessage() . ' Line : ' . $exception->getLine());
+
+            return redirect()->route('admin.employee.search')->with('error', $error);
+        }
     }
+       
+    
 }
