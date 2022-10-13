@@ -9,17 +9,14 @@
                 <div class="card">
                     <div class="card-header">Create Employee</div>
                     <div class="card-body">
-
-
-                        @csrf
                         <div class="form-group ">
                             <label class="col col-md-3" for="avatar">Avatar*</label>
-                            <!-- <div class="col-3 col-md-3">
+                            <div class="col-3 col-md-3">
                                 <img
                                     src="{{ asset(session()->get('currentImgUrl')) }}"
-                                    width="120" height="1520" class="card-img-top" alt="...">
+                                    width="120" height="120" class="card-img-top" alt="...">
 
-                            </div> -->
+                            </div>
                         </div>
 
                         <div class="form-group">

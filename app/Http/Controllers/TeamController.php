@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Repository\TeamRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\TeamsRequests;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\QueryException;
 
 class TeamController extends Controller
 {
@@ -40,15 +41,17 @@ class TeamController extends Controller
 
     public function store(Request $request)
     {
-        $data = session()->get('createTeam');
-        $upd_id = Auth::id();
-        $value = ['ins_id' => $upd_id,
-            'ins_datetime' => date("Y-m-d H:i:s"),
-        ];
-        $data = array_merge($data, $value);
-        $this->teamRepo->create($data);
+        try {
+            $data = session()->get('createTeam');
+            $this->teamRepo->create($data);
 
-        return redirect()->route('teams.search')->with('message', config('messages.create_success'));
+            return redirect()->route('teams.search')->with('message', config('messages.create_success'));
+        } catch (QueryException $exception) {
+            $error = $exception->errorInfo;
+            Log::error('Message: ' . $exception->getMessage() . ' Line : ' . $exception->getLine());
+
+            return redirect()->back()->with('error', $error);
+        }
     }
 
     public function edit($id)
@@ -71,23 +74,34 @@ class TeamController extends Controller
 
     public function update($id, Request $request)
     {
-        $data = session()->get('editTeam');
-        $upd_id = Auth::id();
-        $value = ['upd_id' => $upd_id,
-            'upd_datetime' => date("Y-m-d H:i:s"),
-        ];
-        $data = array_merge($data, $value);
-        $this->teamRepo->update($id, $data);
+        try {
+            $data = session()->get('editTeam');
+            $this->teamRepo->update($id, $data);
 
-        return redirect()->route('teams.search')->with('message', config('messages.update_success'));
+            return redirect()->route('teams.search')->with('message', config('messages.update_success'));
+        } catch (\Exception $exception) {
+            $error = config('messages.update_not_list') . $exception->getCode();
+            Log::error('Message: ' . $exception->getMessage() . ' Line : ' . $exception->getLine());
+
+            return redirect()->route('employee.search')->with('error', $error);
+        }
     }
 
     public function destroy($id)
     {
-        $teams = $this->teamRepo->find($id);
-        $this->teamRepo->delete($id);
+        try {
+            $result = $this->teamRepo->find($id);
+            if ($result) {
+                return redirect()->back()->with('message', config('messages.delete_success'));
+            } else {
+                return redirect()->back()->with('message', config('messages.delete_failed'));
+            }
+        } catch (\Exception $exception) {
+            $error = config('messages.delete_not_list') . $exception->getCode();
+            Log::error('Message: ' . $exception->getMessage() . ' Line : ' . $exception->getLine());
 
-        return redirect()->back()->with('message', config('messages.delete_success'));
+            return redirect()->route('admin.employee.search')->with('error', $error);
+        }
     }
 
     public function search(Request $request)
@@ -95,7 +109,7 @@ class TeamController extends Controller
         try {
             $request->flash();
             $result = $this->teamRepo->getInforSearch($request);
-                           
+
             return view('team.search', compact('result'));
 
         } catch (ModelNotFoundException $exception) {

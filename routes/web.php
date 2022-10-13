@@ -54,4 +54,7 @@ Route::group(['prefix' => '/employee', 'middleware' => 'checkLogin'], function (
     Route::get('/create', [EmployeeController::class, 'create'])->name('employee.create');
     Route::post('/create_confirm', [EmployeeController::class, 'confirmCreate'])->name('employee.create-confirm');
     Route::post('/create', [EmployeeController::class, 'store'])->name('employee.store');
+
+    Route::get('/reset', [EmployeeController::class, 'reset'])->name('employee.reset');
+
 });

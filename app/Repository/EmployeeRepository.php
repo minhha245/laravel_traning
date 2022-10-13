@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Repository\BaseRepository;
 use App\Models\Employee;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +23,7 @@ class EmployeeRepository extends BaseRepository
     {
         // return $this->model->where('last_name', 'LIKE', '%' . $data['name'] . '%')->get();
         if (empty($data)) {
-            return $this->model->select('id', 'team_id', 'first_name', 'last_name', 'email','salary')
+            return $this->model->select('id', 'team_id', 'first_name', 'last_name', 'email', 'salary')
                 ->Paginate(config('constant.LIMIT_PER_PAGE'));
         }
 
@@ -33,8 +32,8 @@ class EmployeeRepository extends BaseRepository
                 ->orWhere('last_name', 'like', '%' . $data['name'] . '%')
                 ->orWhere(DB::raw("concat(first_name, ' ', last_name)"), 'like', '%' . $data['name'] . '%');
         })
-            ->when(!empty($data['team']), function ($query) use ($data) {
-                return $query->where('team_id', $request['team']);
+            ->when(!empty($data['team_id']), function ($query) use ($data) {
+                return $query->where('team_id', $data['team_id']);
             })
             ->when(!empty($data['email']), function ($query) use ($data) {
                 return $query->where('email', 'LIKE', '%' . $data['email'] . '%');
@@ -52,18 +51,17 @@ class EmployeeRepository extends BaseRepository
     {
         $attributes['avatar'] = session()->get('createEmployee')['file_name'];
         $attributes['password'] = Auth::user()->password;
-        $attributes['email'] = Auth::user()->email;
         session()->forget('addEmployee');
         session()->forget('currentImgUrl');
 
         return parent::create($attributes);
-    } 
+    }
 
     public function update($id, $attributes = [])
     {
-        // if (session()->has('editEmployee')) {
-        //     $attributes['avatar'] = session()->get('editEmployee')['file_name'];
-        // }
+        if (session()->has('editEmployee')) {
+            $attributes['avatar'] = session()->get('editEmployee')['file_name'];
+        }
         $attributes['password'] = Auth::user()->password;
         session()->forget('editEmployee');
         session()->forget('currentImgUrl');

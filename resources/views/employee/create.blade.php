@@ -15,14 +15,23 @@
                             </div>
                         @endif
 
-                        <form method="POST" action="{{route('employee.create-confirm')}}">
+                        <form method="POST" action="{{route('employee.create-confirm')}}" enctype="multipart/form-data">
                             @csrf
-                            <!-- <div class="form-group ">
+                            <div class="form-group ">
                                 <label for="avatar">Avatar*</label>
-                                <label class="file-upload"><input class="avatar" type="text" name="avatar"
-                                                                  onchange="readURL(this);" value="12346.png"></label>
+                                <div class="col col-md-3">
 
-                            </div> -->
+                                    <img
+                                        src="{{asset(!empty(session()->get('currentImgUrl')) ? session()->get('currentImgUrl') : 'public/images/empty.jpg')}}"
+                                        width="120" height="120" class="card-img-top" id="upload-file" alt="...">
+
+                                    <input type="file" name="avatar" value="{{ old('avatar') }}" onchange="readURL(this);"
+                                           class="form-control file-input-control"/>
+                                    @error('avatar')
+                                    <small class="form-text text-danger">{!! $message !!}</small>
+                                    @enderror
+                                </div>
+                            </div>
                             @error('Avatar')
                             <small class="form-text text-danger"> {{ $message }}</small>
                             @enderror
@@ -182,7 +191,7 @@
                             <small class="form-text text-danger"> {{ $message }}</small>
                             @enderror
                             <div class="form-group d-flex mt-4" style="justify-content: space-between">
-                                <span class="btn btn-secondary"><a href="{{route('employee.create')}}">Reset</a></span>
+                                <span class="btn btn-secondary"><a href="{{route('employee.reset')}}">Reset</a></span>
                                 <button type="submit" class="btn btn-primary">Confirm</button>
                             </div>
                         </form>

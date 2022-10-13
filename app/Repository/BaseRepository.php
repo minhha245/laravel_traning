@@ -51,7 +51,7 @@ abstract class BaseRepository implements RepositoryInterface
 
     public function update($id, $attributes = [])
     {
-        $result = $this->find($id);
+        $result = $this->model->find($id);
 
         if ($result) {
             $attributes['upd_id'] = Auth::id();

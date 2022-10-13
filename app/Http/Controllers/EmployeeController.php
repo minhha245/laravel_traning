@@ -6,11 +6,9 @@ use App\Http\Requests\EmployeeRequests;
 use App\Repository\TeamRepository;
 use Illuminate\Http\Request;
 use App\Repository\EmployeeRepository;
-use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Database\QueryException;
+
 
 class EmployeeController extends Controller
 {
@@ -44,11 +42,37 @@ class EmployeeController extends Controller
         return view('employee.create')->with('teams', $teams);
     }
 
+    public function upload()
+    {
+        $fileName = null;
+        $imageUrl = null;
+
+        if (request()->hasFile('avatar')) {
+            $image = request()->file('avatar');
+            $fileName = 'avatar' . time() . '_' . $image->getClientOriginalName();
+            $image->storeAs(config('constant.PATH_IMG_PUBLIC'), $fileName);
+            $imageUrl = config('constant.PATH_IMG_STORAGE') . $fileName;
+
+            session()->put('currentImgUrl', $imageUrl);
+
+        } else {
+            $fileName = str_replace(config('constant.PATH_IMG_STORAGE'), '', session()->get('currentImgUrl'));
+            $imageUrl = session()->get('currentImgUrl');
+        }
+
+        return [
+            'file_name' => $fileName,
+            'file_path' => $imageUrl,
+        ];
+
+    }
+
     public function confirmCreate(EmployeeRequests $request)
     {
         request()->flash();
-        $data = $request->all();
-        
+        $img = $this->upload();
+        $request->merge($img);
+        $data = $request->except('avatar');
         session()->put('createEmployee', $data);
         $teams = $this->teamRepo->find(request()->team_id);
 
@@ -59,23 +83,23 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         try {
-        $data = session()->get('createEmployee');
+            $data = session()->get('createEmployee');
 
-        if (!$data) {
-            return redirect()->route('employee.search')->with('message', config('messages.create_failed'));
-        }
+            if (!$data) {
+                return redirect()->route('employee.search')->with('message', config('messages.create_failed'));
+            }
 
-        $this->employeeRepo->create($data);
+            $this->employeeRepo->create($data);
 
-        return redirect()->route('employee.search')->with('message', config('messages.create_success'));
-        
+            return redirect()->route('employee.search')->with('message', config('messages.create_success'));
+
         } catch (QueryException $exception) {
             $error = $exception->errorInfo;
             Log::error('Message: ' . $exception->getMessage() . ' Line : ' . $exception->getLine());
 
             return redirect()->back()->with('error', $error);
         }
-        
+
     }
 
     public function edit($id)
@@ -86,17 +110,31 @@ class EmployeeController extends Controller
             return redirect()->route('employee.search')->with('message', config('messages.update_not_list'));
         }
 
-        return view('employee.edit',compact('result', 'teams'));
+        return view('employee.edit', compact('result', 'teams'));
     }
 
     public function confirmEdit(EmployeeRequests $request)
     {
         $request->flash();
-        $data = $request->all();
         $result = $this->employeeRepo->find($request->id);
         $teams = $this->teamRepo->find($request->team_id);
-        session()->put('editEmployee', $data);
+        $oldImg = $result->avatar;
+        $img = $this->upload();
+        $request = request()->merge($img);
 
+        if ($request->avatar == null && !session()->has('currentImgUrl')) {
+
+            $request = request()->merge([
+                'file_name' => $oldImg,
+                'path' => config('constant.PATH_IMG_STORAGE') . $oldImg
+            ]);
+
+            session()->put('currentImgUrl', $request->path);
+        }
+
+        $data = $request->except('avatar');
+        session()->put('editEmployee', $data);
+//dd($data);
         return view('employee.confirm_edit')->with(compact('teams', 'result'));
     }
 
@@ -109,16 +147,17 @@ class EmployeeController extends Controller
             if (!$data) {
                 return redirect()->route('employee.search')->with('message', config('messages.update_failed'));
             }
+            $this->employeeRepo->update($id, $data);
 
             return redirect()->route('employee.search')->with('message', config('messages.update_success'));
-        
+
         } catch (\Exception $exception) {
             $error = config('messages.update_not_list') . $exception->getCode();
             Log::error('Message: ' . $exception->getMessage() . ' Line : ' . $exception->getLine());
 
             return redirect()->route('employee.search')->with('error', $error);
         }
-        
+
     }
 
     public function destroy($id)
@@ -139,6 +178,20 @@ class EmployeeController extends Controller
             return redirect()->route('admin.employee.search')->with('error', $error);
         }
     }
-       
-    
+
+    public function reset(Request $request)
+    {
+        try {
+            session()->forget('createEmployee');
+            session()->forget('editEmployee');
+            session()->forget('currentImgUrl');
+
+            return redirect()->back();
+
+        } catch (\Exception $exception) {
+            Log::error('Message: ' . $exception->getMessage() . ' Line : ' . $exception->getLine());
+
+            return back()->withError($exception->getMessage())->withInput();
+        }
+    }
 }

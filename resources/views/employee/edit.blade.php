@@ -24,8 +24,17 @@
                             </div>
                             <div class="form-group ">
                                 <label class="col col-md-3" for="avatar">Avatar*</label>
-                                <label class="file-upload"><input class="avatar" type="text" name="avatar"
-                                                                  onchange="readURL(this);" value="12346.png"></label>
+                                <div class="col col-md-3">
+                                    <img
+                                        src="{{ asset(!empty(session('currentImgUrl'))  ? session('currentImgUrl') : config('constant.PATH_IMG_STORAGE'). $result->avatar)}}"
+                                        width="120" height="120" class="card-img-top" id="upload-file" alt="...">
+
+                                    <input type="file" name="avatar" value="" onchange="readURL(this);"
+                                           class="form-control file-input-control"/>
+                                    @error('avatar')
+                                    <small class="form-text text-danger">{!! $message !!}</small>
+                                    @enderror
+                                </div>
 
                             </div>
                             @error('Avatar')
@@ -191,7 +200,7 @@
                             @enderror
                             <div class="form-group d-flex mt-4" style="justify-content: space-between">
                                 <span class="btn btn-secondary"><a
-                                        href="{{route('employee.edit', $result->id)}}">Reset</a></span>
+                                        href="{{route('employee.reset')}}">Reset</a></span>
                                 <button type="submit" class="btn btn-primary">Confirm</button>
                             </div>
                         </form>

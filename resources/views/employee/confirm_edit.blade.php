@@ -14,8 +14,12 @@
                         @csrf
                         <div class="form-group ">
                             <label class="col col-md-3" for="avatar">Avatar*</label>
-                            <label class="file-upload"><input class="avatar" type="file" name="avatar"
-                                                              onchange="readURL(this);" value=""></label>
+                            <div class="col-3 col-md-3">
+                                <img
+                                    src="{{ asset(session()->get('currentImgUrl')) }}"
+                                    width="120" height="120" class="card-img-top" alt="...">
+
+                            </div>
 
                         </div>
 

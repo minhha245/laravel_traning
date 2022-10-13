@@ -17,7 +17,7 @@
 
         <div id="form_search">
             <form method="GET" action="">
-            
+
                 <div class="form-group row">
                     <span class="input-space">
                         <label for="team">Team</label>
@@ -67,7 +67,7 @@
                                 <tr>
                                     <th onclick="sortByField('id')" scope="col">ID <i class="fas fa-sort"></i></th>
                                     <th onclick="sortByField('first_name')">Name <i class="fas fa-sort"></i></th>
-                                    <th onclick="sortByField('team')">Team <i class="fas fa-sort"></i></th>
+                                    <th onclick="sortByField('team_id')">Team <i class="fas fa-sort"></i></th>
                                     <th onclick="sortByField('email')">Email <i class="fas fa-sort"></i></th>
 
                                     <th scope="col">Gender</th>
@@ -98,8 +98,8 @@
                                         <td>{{$employee->gender == config('constant.GENDER_MALE') ? 'Male':'Female'}}</td>
                                         <td>{{$employee->birthday}}</td>
                                         <td>{{$employee->address}}</td>
-                                        <td>{{$employee->avatar}}</td>
-                                        <td>{{number_format($employee->salary,0,'','.'). "vnđ"}}</td>
+                                        <td><img width="100px" height="100px" src="{{asset(config('constant.PATH_IMG_STORAGE').($employee->avatar))}}"></td>
+                                        <td>{{number_format($employee->salary,0,'','.'). " vnđ"}}</td>
                                         <td>
                                             <span><a class="btn btn-danger" href="{{route('employee.edit',[$employee->id])}}">Edit</a></span><span>
             <a class="btn btn-success" href="{{ route('employee.delete',[$employee->id]) }}"

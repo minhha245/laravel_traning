@@ -2,7 +2,11 @@
 
 namespace App\Http\Requests;
 
+use http\Env\Request;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Contracts\Validation\Validator;
+
 
 class EmployeeRequests extends FormRequest
 {
@@ -23,8 +27,8 @@ class EmployeeRequests extends FormRequest
      */
     public function rules()
     {
-        return [
-            // 'avatar' => 'required',
+        $validate = [
+            'avatar' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048|dimensions:min_width=100,min_height=100,max_width=1920,max_height=1920',
             'team_id' => 'required',
             'first_name' => 'required|max:129',
             'last_name' => 'required|max:129',
@@ -37,6 +41,17 @@ class EmployeeRequests extends FormRequest
             'type_of_work' => 'required',
             'status' => 'required'
         ];
+        if (!$this->hasFile('avatar') && !session()->has('currentImgUrl')) {
+            $validate['avatar'] = 'nullable|mimes:png,gif,jpeg|max:10000';
+        }
+
+        if (in_array($this->method(), ['PUT', 'PATCH'])) {
+            $validate['avatar'] = [
+                'mimes:png,gif,jpeg|max:10000',
+            ];
+        }
+
+        return $validate;
     }
 
     public function messages()
@@ -57,33 +72,4 @@ class EmployeeRequests extends FormRequest
         ];
     }
 
-    public function upload()
-    {
-        $all = parent::upload();
-
-        $fileName = null;
-        $imageUrl = null;
-
-        if (request()->hasFile('avatar')) {
-            $image = request()->file('avatar');
-            $fileName = 'avatar' . time() . '_' . $image->getClientOriginalName();
-            $image->storeAs('public/avatars/', $fileName);
-            $imageUrl = 'storage/avatars/' . $fileName;
-
-            session()->put('currentImgUrl', $imageUrl);
-
-        } else {
-            $imageFileName = str_replace('storage/avatars/', '', session()->get('currentImgUrl'));
-            $imageUrl = session()->get('currentImgUrl');
-        }
-
-
-        request()->merge([
-            'file_name' => $imageFileName,
-            'file_path' => $imageUrl,
-        ]);
-
-        request()->flash();
-        return $all;
-    }
 }
