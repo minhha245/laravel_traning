@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Search Employee')
-<link rel="stylesheet" href="{{ asset('resources/css/search.css') }}">
+<link rel="stylesheet" href="{{ asset('./resources/css/search.css') }}">
 @section('content')
 
     <div class="card-body">
@@ -21,9 +21,9 @@
                 <div class="form-group row">
                     <span class="input-space">
                         <label for="team">Team</label>
-                                <select name="team_id" id="team">
+                                <select name="team_id" id="team_id">
                                        @foreach($teams as $value)
-                                        <option value="{{$value->id}}">{{$value->name}}</option>
+                                        <option value="{{$value->id}}" {{(isset(request()->team_id) && $value->id == request()->team_id)?'selected':''}}>{{$value->name}}</option>
                                     @endforeach
                                 </select>
                      </span>
@@ -51,7 +51,12 @@
             </form>
         </div>
         <!--            Pagging-->
-        @include('layouts.pagging')
+{{--        @include('layouts.pagging')--}}
+            <div>
+                <a href="{{route('employee.export', request()->all())}}" class="btn btn-success"
+                   style="margin-bottom: 20px; margin-left:200px;"> Export CSV</a>
+
+            </div>
         <!--            Data Table-->
         <div class="container">
 
@@ -89,11 +94,12 @@
                                 @else
                                 @endif
 
-                                @foreach($result as $key => $employee)
+                                @foreach($result as $employee)
+
                                     <tr>
                                         <th scope="row">{{$employee->id}}</th>
-                                        <td>{{"$employee->full_name"}}</td>
-                                        <td>{{$employee->team->name}}</td>
+                                        <td>{{$employee->full_name}}</td>
+                                        <td>{{$employee->name}}</td>
                                         <td>{{$employee->email}}</td>
                                         <td>{{$employee->gender == config('constant.GENDER_MALE') ? 'Male':'Female'}}</td>
                                         <td>{{$employee->birthday}}</td>
@@ -101,15 +107,41 @@
                                         <td><img width="100px" height="100px" src="{{asset(config('constant.PATH_IMG_STORAGE').($employee->avatar))}}"></td>
                                         <td>{{number_format($employee->salary,0,'','.'). " vnđ"}}</td>
                                         <td>
-                                            <span><a class="btn btn-danger" href="{{route('employee.edit',[$employee->id])}}">Edit</a></span><span>
-            <a class="btn btn-success" href="{{ route('employee.delete',[$employee->id]) }}"
-               onclick="return confirm('Are you sure');">Delete</a>
-      </span>
+                                            <span><a class="btn btn-danger" href="{{route('employee.edit',[$employee->id])}}">Edit</a></span>
+                                            <span> <a class="btn btn-success" href="{{ route('employee.delete',[$employee->id]) }}">Delete</a></span>
+{{--            <button type="button"--}}
+{{--                    class="btn btn-primary __web-inspector-hide-shortcut__ btn btn-primary"--}}
+{{--                    style="float: right; color: white;" data-toggle="modal" data-target="#modal-sm">Delete--}}
+{{--                            </button>--}}
+{{--                            <div class="modal fade" id="modal-sm">--}}
+{{--                                <div class="modal-dialog modal-sm">--}}
+{{--                                    <div class="modal-content">--}}
+{{--                                        <div class="modal-header">--}}
+{{--                                            <h5 class="modal-title">Confirm</h5>--}}
+{{--                                        </div>--}}
+{{--                                        <div class="modal-body">--}}
+{{--                                            Are you sure ?--}}
+{{--                                        </div>--}}
+{{--                                        <div class="modal-footer justify-content-between">--}}
+{{--                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel--}}
+{{--                                            </button>--}}
+{{--                                                --}}
+{{--                                            <a class="btn btn-success" href="{{ route('employee.delete',[$employee->id]) }}">OK</a>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+
+{{--                                </div>--}}
+
+{{--                            </div>--}}
+
                                         </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
+                            <div class="page-navigation" style="margin-bottom: 1px!important;">
+                                {{ $result->appends(request()->input())->links() }}
+                            </div>
                         </div>
                     </div>
                 </div>

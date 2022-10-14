@@ -30,31 +30,34 @@ Route::get('registration', [CustomAuthController::class, 'registration'])->name(
 Route::post('custom-registration', [CustomAuthController::class, 'customRegistration'])->name('register.custom');
 Route::get('logout', [CustomAuthController::class, 'logout'])->name('logout');
 
-Route::group(['prefix' => '/teams', 'middleware' => 'checkLogin'], function () {
-    Route::get('/search', [TeamController::class, 'search'])->name('teams.search');
-    Route::get('/delete/{id}', [TeamController::class, 'destroy'])->name('teams.delete');
+Route::group(['middleware' => 'checkLogin'], function () {
+    Route::group(['prefix' => '/teams', 'as' => 'teams.'], function () {
+        Route::get('/search', [TeamController::class, 'search'])->name('search');
+        Route::get('/delete/{id}', [TeamController::class, 'destroy'])->name('delete');
 
-    Route::get('/edit/{id}', [TeamController::class, 'edit'])->name('teams.edit');
-    Route::post('/edit_confirm/{id}', [TeamController::class, 'confirmEdit'])->name('teams.edit-confirm');
-    Route::post('/update/{id}', [TeamController::class, 'update'])->name('teams.update');
+        Route::get('/edit/{id}', [TeamController::class, 'edit'])->name('edit');
+        Route::post('/edit_confirm/{id}', [TeamController::class, 'confirmEdit'])->name('edit-confirm');
+        Route::post('/update/{id}', [TeamController::class, 'update'])->name('update');
 
-    Route::get('/create', [TeamController::class, 'create'])->name('teams.create');
-    Route::post('/create_confirm', [TeamController::class, 'confirmCreate'])->name('teams.create-confirm');
-    Route::post('/create', [TeamController::class, 'store'])->name('teams.store');
-});
+        Route::get('/create', [TeamController::class, 'create'])->name('create');
+        Route::post('/create_confirm', [TeamController::class, 'confirmCreate'])->name('create-confirm');
+        Route::post('/create', [TeamController::class, 'store'])->name('store');
+    });
 
-Route::group(['prefix' => '/employee', 'middleware' => 'checkLogin'], function () {
-    Route::get('/search', [EmployeeController::class, 'search'])->name('employee.search');
-    Route::get('/delete/{id}', [EmployeeController::class, 'destroy'])->name('employee.delete');
+    Route::group(['prefix' => '/employee', 'as' => 'employee.'], function () {
+        Route::get('/search', [EmployeeController::class, 'search'])->name('search');
+        Route::get('/delete/{id}', [EmployeeController::class, 'destroy'])->name('delete');
 
-    Route::get('/edit/{id}', [EmployeeController::class, 'edit'])->name('employee.edit');
-    Route::post('/edit_confirm/{id}', [EmployeeController::class, 'confirmEdit'])->name('employee.edit-confirm');
-    Route::post('/update/{id}', [EmployeeController::class, 'update'])->name('employee.update');
+        Route::get('/edit/{id}', [EmployeeController::class, 'edit'])->name('edit');
+        Route::post('/edit_confirm/{id}', [EmployeeController::class, 'confirmEdit'])->name('edit-confirm');
+        Route::post('/update/{id}', [EmployeeController::class, 'update'])->name('update');
 
-    Route::get('/create', [EmployeeController::class, 'create'])->name('employee.create');
-    Route::post('/create_confirm', [EmployeeController::class, 'confirmCreate'])->name('employee.create-confirm');
-    Route::post('/create', [EmployeeController::class, 'store'])->name('employee.store');
+        Route::get('/create', [EmployeeController::class, 'create'])->name('create');
+        Route::post('/create_confirm', [EmployeeController::class, 'confirmCreate'])->name('create-confirm');
+        Route::post('/create', [EmployeeController::class, 'store'])->name('store');
+        Route::get('/export_cvs', [EmployeeController::class, 'exportCSV'])->name('export');
 
-    Route::get('/reset', [EmployeeController::class, 'reset'])->name('employee.reset');
+        Route::get('/reset', [EmployeeController::class, 'reset'])->name('reset');
 
+    });
 });

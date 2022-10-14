@@ -11,7 +11,7 @@ class EmployeeRepository extends BaseRepository
     //lấy model tương ứng
     public function getModel()
     {
-        return \App\Models\Employee::class;
+        return Employee::class;
     }
 
     public function getEmployee()
@@ -23,14 +23,12 @@ class EmployeeRepository extends BaseRepository
     {
         // return $this->model->where('last_name', 'LIKE', '%' . $data['name'] . '%')->get();
         if (empty($data)) {
-            return $this->model->select('id', 'team_id', 'first_name', 'last_name', 'email', 'salary')
+            return $this->model->with('team')->select('id', 'team_id', 'name', 'first_name', 'last_name', 'email', 'salary')
                 ->Paginate(config('constant.LIMIT_PER_PAGE'));
         }
 
-        return $this->model->when(!empty($data['name']), function ($query) use ($data) {
-            return $query->where('first_name', 'like', '%' . $data['name'] . '%')
-                ->orWhere('last_name', 'like', '%' . $data['name'] . '%')
-                ->orWhere(DB::raw("concat(first_name, ' ', last_name)"), 'like', '%' . $data['name'] . '%');
+        return $this->model->with('team')->when(!empty($data['name']), function ($query) use ($data) {
+            return $query->where(DB::raw("concat(first_name, ' ', last_name)"), 'like', '%' . $data['name'] . '%');
         })
             ->when(!empty($data['team_id']), function ($query) use ($data) {
                 return $query->where('team_id', $data['team_id']);
@@ -43,6 +41,9 @@ class EmployeeRepository extends BaseRepository
             })
             ->when(!empty($data['sort_field'] && $data['sort_type'] == 'asc'), function ($query) use ($data) {
                 return $query->orderBy($data['sort_field']);
+            })
+            ->when(empty($data['sort_field'] && empty($data['sort_type'])), function ($query) use ($data) {
+                return $query->orderByDesc('id');
             })
             ->Paginate(config('constant.LIMIT_PER_PAGE'));
     }
@@ -67,5 +68,12 @@ class EmployeeRepository extends BaseRepository
         session()->forget('currentImgUrl');
 
         return parent::update($id, $attributes);
+    }
+
+    public function findByEmail($email)
+    {
+        $result = $this->model->find($email);
+
+        return $result;
     }
 }

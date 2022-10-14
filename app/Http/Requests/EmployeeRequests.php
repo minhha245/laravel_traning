@@ -6,6 +6,7 @@ use http\Env\Request;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Contracts\Validation\Validator;
+use App\Repository\EmployeeRepository;
 
 
 class EmployeeRequests extends FormRequest
@@ -25,6 +26,7 @@ class EmployeeRequests extends FormRequest
      *
      * @return array
      */
+
     public function rules()
     {
         $validate = [
@@ -42,7 +44,7 @@ class EmployeeRequests extends FormRequest
             'status' => 'required'
         ];
         if (!$this->hasFile('avatar') && !session()->has('currentImgUrl')) {
-            $validate['avatar'] = 'nullable|mimes:png,gif,jpeg|max:10000';
+            $validate['avatar'] = 'required|mimes:png,gif,jpeg|max:10000';
         }
 
         if (in_array($this->method(), ['PUT', 'PATCH'])) {
@@ -72,4 +74,29 @@ class EmployeeRequests extends FormRequest
         ];
     }
 
+    protected function failedValidation(Validator $validator)
+    {
+        if ($validator->errors()->has('avatar')) {
+            session()->forget('currentImgUrl');
+        }
+        parent::failedValidation($validator);
+    }
+
+//    public $employeeRepo;
+//
+//    public function __construct(EmployeeRepository $employeeRepo)
+//    {
+//        $this->employeeRepo = $employeeRepo;
+//    }
+//    public function checkMail()
+//    {
+//        parent::checkMail();
+//        if (request()->has('email')) {
+//            $email = request()->input('email');
+//            $result = $this->employeeRepo->findByEmail($email);
+//            if ($result){
+//                return
+//            }
+//        }
+//    }
 }

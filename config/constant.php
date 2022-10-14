@@ -20,8 +20,10 @@ return [
     //status
     'STATUS_ON_WORKING' => 1,
     'STATUS_RETIRED' => 2,
-//url
+    //url
     'PATH_IMG_PUBLIC' => 'public/images/employees/',
     'PATH_IMG_STORAGE' => 'storage/app/public/images/employees/',
+    //pagging
+    'LIMIT_PER_PAGE' => 3,
 ];
 ?>

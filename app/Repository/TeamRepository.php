@@ -30,6 +30,9 @@ class TeamRepository extends BaseRepository
             ->when(!empty($data['sort_field'] && $data['sort_type'] == 'asc'), function ($q) use ($data) {
                 return $q->orderBy($data['sort_field']);
             })
+            ->when(empty($data['sort_field'] && empty($data['sort_type'])), function ($query) use ($data) {
+                return $query->orderByDesc('id');
+            })
             ->Paginate(config('constant.LIMIT_PER_PAGE'));
     }
 }

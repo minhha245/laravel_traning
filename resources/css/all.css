@@ -53,22 +53,7 @@ form .d-flex{
 }
 
 /*======FILE======*/
-input[type=file]{
-    display: none;
-}
 
-.file-upload{
-    cursor: pointer;
-    border: 1px solid#000;
-    border-radius: 5px;
-    display: inline-block;
-    padding: 6px 12px;
-}
-
-img{
-    width: 100px;
-    height: 100px;
-}
 .active{
     background-color: #15c933;
 }

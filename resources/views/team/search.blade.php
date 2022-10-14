@@ -31,9 +31,6 @@
             </form>
         </div>
 
-        <!--            Pagging-->
-        @include('layouts.pagging')
-        <!--            Data Table-->
         <div class="container">
 
             <div class="row justify-content-center">
@@ -42,12 +39,12 @@
                         <div class="card-header"></div>
 
                         <div class="card-body">
-                          
+
                             <table class="table">
                                 <thead class="thead-light">
                                 <tr>
                                     <th onclick="sortByField('id')">ID <i class="fas fa-sort"></i></th>
-                                    <th onclick="sortByField('id')">Name <i class="fas fa-sort"></i></th>
+                                    <th onclick="sortByField('name')">Name <i class="fas fa-sort"></i></th>
                                     <th scope="col"></th>
                                     <th scope="col"></th>
                                     <th scope="col"></th>
@@ -89,6 +86,9 @@
                                 @endforeach
                                 </tbody>
                             </table>
+                            <div class="page-navigation" style="margin-bottom: 1px!important;">
+                                {{ $result->appends(request()->input())->links() }}
+                            </div>
                         </div>
                     </div>
                 </div>

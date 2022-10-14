@@ -26,7 +26,7 @@ class Team extends Model
     ];
     protected $primarykey = 'id';
     protected $table = 'm_teams';
-    public function employees()
+    public function employee()
     {
         return $this->hasMany(Employee::class);
     }

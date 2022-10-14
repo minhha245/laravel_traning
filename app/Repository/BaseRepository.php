@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Repository\RepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 
 abstract class BaseRepository implements RepositoryInterface
@@ -57,6 +56,7 @@ abstract class BaseRepository implements RepositoryInterface
             $attributes['upd_id'] = Auth::id();
             $attributes['upd_datetime'] = date("Y-m-d H:i:s");
             $result->update($attributes);
+
             return $result;
         }
 
@@ -66,11 +66,11 @@ abstract class BaseRepository implements RepositoryInterface
     public function delete($id)
     {
         $result = $this->find($id);
+        $value =[];
         if ($result) {
-            $value['del_flag'] = config('constant.DELETED_ON');
-            $value['upd_id'] = Auth::id();
-            $value['upd_datetime'] = date("Y-m-d H:i:s");
-            $result->update($value);
+            $value = ['del_flag' => config('constant.DELETED_ON')];
+            $q = $this->update($id, $value);
+            $result->$q;
 
             return true;
         }

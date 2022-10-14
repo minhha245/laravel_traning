@@ -90,7 +90,7 @@ class TeamController extends Controller
     public function destroy($id)
     {
         try {
-            $result = $this->teamRepo->find($id);
+            $result = $this->teamRepo->delete($id);
             if ($result) {
                 return redirect()->back()->with('message', config('messages.delete_success'));
             } else {
@@ -106,16 +106,9 @@ class TeamController extends Controller
 
     public function search(Request $request)
     {
-        try {
             $request->flash();
             $result = $this->teamRepo->getInforSearch($request);
 
             return view('team.search', compact('result'));
-
-        } catch (ModelNotFoundException $exception) {
-            Log::error('Message: ' . $exception->getMessage() . ' Line : ' . $exception->getLine());
-
-            return back()->withError($exception->getMessage())->withInput();
-        }
     }
 }

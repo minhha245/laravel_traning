@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Repository\EmployeeRepository;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
+use App\Jobs\SendEmail;
 
 
 class EmployeeController extends Controller
@@ -22,18 +23,11 @@ class EmployeeController extends Controller
 
     public function search(Request $request)
     {
-        try {
-            $request->flash();
-            $teams = $this->teamRepo->getAll();
-            $result = $this->employeeRepo->getInforSearch($request);
+        $request->flash();
+        $teams = $this->teamRepo->getAll();
+        $result = $this->employeeRepo->getInforSearch($request);
 
-            return view('employee.search', compact('result', 'teams'));
-
-        } catch (ModelNotFoundException $exception) {
-            Log::error('Message: ' . $exception->getMessage() . ' Line : ' . $exception->getLine());
-
-            return back()->withError($exception->getMessage())->withInput();
-        }
+        return view('employee.search', compact('result', 'teams'));
     }
 
     public function create()
@@ -88,6 +82,8 @@ class EmployeeController extends Controller
             if (!$data) {
                 return redirect()->route('employee.search')->with('message', config('messages.create_failed'));
             }
+
+            SendEmail::dispatch($data)->delay(now()->addMinute(1));
 
             $this->employeeRepo->create($data);
 
@@ -193,5 +189,103 @@ class EmployeeController extends Controller
 
             return back()->withError($exception->getMessage())->withInput();
         }
+    }
+
+    public function exportCSV(Request $request)
+    {
+        $time = date("Y-m-d H:i:s");
+        $fileName = 'employees' . $time . '.csv';
+        $employees = $this->employeeRepo->getInforSearch($request);
+
+        $headers = [
+            "Content-Encoding: UTF-8",
+            "Content-type" => "text/csv, charset=UTF-8",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $columns = [
+            'id',
+            'team',
+            'name',
+            'email',
+            'gender',
+            'birthday',
+            'address',
+            'avatar',
+            'salary',
+            'position',
+            'type_of_work',
+            'status'
+        ];
+
+        $callback = function () use ($employees, $columns) {
+            $file = fopen('php://output', 'w');
+
+            fputs($file, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
+            fputcsv($file, $columns);
+
+            foreach ($employees as $employee) {
+                $row['id'] = $employee->id;
+                $row['team'] = $employee->team->name;
+                $row['name'] = $employee->fullname;
+                $row['email'] = $employee->email;
+
+                $genders = [1 => 'Male', 2 => 'Female'];
+                foreach ($genders as $key => $value) {
+                    if ($employee->gender == $key) {
+                        $row['gender'] = $value;
+                    }
+                }
+
+                $row['birthday'] = $employee->birthday;
+                $row['address'] = $employee->address;
+                $row['avatar'] = $employee->avatar;
+                $row['salary'] = $employee->salary;
+
+                $positions = [1 => 'Manager', 2 => 'Team Leader', 3 => 'BSE', 4 => 'Dev', 5 => 'Tester'];
+                foreach ($positions as $key => $value) {
+                    if ($employee->position == $key) {
+                        $row['position'] = $value;
+                    }
+                }
+
+                $type_of_works = [1 => 'Full Time', 2 => 'Part Time', 3 => 'Probationary Staff', 4 => 'Intern'];
+                foreach ($type_of_works as $key => $value) {
+                    if ($employee->type_of_work == $key) {
+                        $row['type_of_work'] = $value;
+                    }
+                }
+
+                $status = [0 => 'On Working', 1 => 'Retired'];
+                foreach ($status as $key => $value) {
+                    if ($employee->status == $key) {
+                        $row['status'] = $value;
+                    }
+                }
+
+                fputcsv($file, [
+                    $row['id'],
+                    $row['team'],
+                    $row['name'],
+                    $row['email'],
+                    $row['gender'],
+                    $row['birthday'],
+                    $row['address'],
+                    $row['avatar'],
+                    $row['salary'],
+                    $row['position'],
+                    $row['type_of_work'],
+                    $row['status']
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+
     }
 }

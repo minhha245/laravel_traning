@@ -9,7 +9,7 @@ use App\Scopes\DelflagScope;
 class Employee extends Model
 {
     use HasFactory;
-    
+
     protected static function booted()
     {
         static::addGlobalScope(new DelflagScope);
@@ -49,4 +49,8 @@ class Employee extends Model
         return $this->first_name . " " . $this->last_name;
     }
 
+    public function setGtAttribute()
+    {
+       return ($this->gender == config('constant.GENDER_MALE')) ? 'Male':'Female';
+    }
 }
