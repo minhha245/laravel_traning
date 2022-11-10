@@ -27,7 +27,7 @@ class MailNotify extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build3243()
     {
         return $this
             ->view('mails.mail-notify')
