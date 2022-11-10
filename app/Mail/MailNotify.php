@@ -29,10 +29,10 @@ class MailNotify extends Mailable
      */
     public function build()
     {
-        return $this->from('camgiacla10x@gmail.com')
+        return $this
             ->view('mails.mail-notify')
             ->subject('Welcome to the system!!!');
-            rghhietrghojkewrgljk;fsgdljkmhnfg.,fdf_get_encoding(fdf_document)
+            rghhietrghojkewrgljk;fsfdf_get_encoding(fdf_document)
             jhodfguij
     }
 }
